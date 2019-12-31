@@ -2,7 +2,11 @@
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    if [ -r ~/.dircolors ]; then
+        eval "$(dircolors -b ~/.dircolors)"
+    else
+        eval "$(dircolors -b)"
+    fi
     alias ls='ls --color=auto'
     #alias dir='dir --color=auto'
     #alias vdir='vdir --color=auto'
@@ -46,10 +50,10 @@ alias cp='cp -i'
 alias mv='mv -i'
 
 # work ssh
-alias wssh="cd $HOME/Documents/sil/repos/playbooks && ssh -F ./ssh.cfg $@"
+alias wssh='cd $HOME/Documents/sil/repos/playbooks && ssh -F ./ssh.cfg'
 
 # work scp
-alias wscp="cd $HOME/Documents/sil/repos/playbooks && scp -F ./ssh.cfg $@"
+alias wscp='cd $HOME/Documents/sil/repos/playbooks && scp -F ./ssh.cfg'
 
 # work sftp
-alias wsftp="cd $HOME/Documents/sil/repos/playbooks && sftp -F ./ssh.cfg $@"
+alias wsftp='cd $HOME/Documents/sil/repos/playbooks && sftp -F ./ssh.cfg'
