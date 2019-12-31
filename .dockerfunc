@@ -85,6 +85,13 @@ postwoman() {
         liyasthomas/postwoman
 }
 
+shellcheck() {
+    docker run -it --rm \
+        --name shellcheck \
+        -v $PWD:/mnt \
+        koalaman/shellcheck:stable "$@"
+}
+
 # sublime() {}
 
 skype() {
@@ -125,9 +132,6 @@ spotify() {
         --group-add video \
         r.j3ss.co/spotify
 }
-
-# sil_is() {}
-# alias sil-is="sil_is"
 
 # youtube_dl() {}
 # alias youtube-dl="youtube_dl"
