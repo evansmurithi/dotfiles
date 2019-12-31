@@ -1,0 +1,168 @@
+#!/bin/bash
+# Bash wrappers for docker run commands
+
+#
+# Helper Functions
+#
+del_stopped() {
+    local name=$1
+    local state
+    state=$(docker inspect --format "{{.State.Running}}" "$name" 2>/dev/null)
+
+    if [[ "$state" == "false" ]]; then
+        docker rm "$name"
+    fi
+}
+
+#
+# Container Aliases
+#
+aws() {
+    docker run -it --rm \
+        --name awscli \
+        -v $HOME/.aws:/root/.aws \
+        --log-driver none \
+       r.j3ss.co/awscli "$@"
+}
+
+ffmpeg() {
+    docker run -it --rm \
+        --name ffmpeg \
+        -v $PWD:/tmp \
+        jrottenberg/ffmpeg:4.2-alpine "$@"
+}
+
+dbeaver() {
+    del_stopped dbeaver
+
+    # Fix for non-root container permissions
+    # chown -R 1000:1000 .dbeaver/{config,storage}
+
+    local TIMEZONE=$(cat /etc/timezone)
+    docker run -d \
+        --name dbeaver \
+        -e DISPLAY=unix$DISPLAY \
+        -e TZ=$TIMEZONE \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        -v $HOME/.dbeaver/config:/config \
+        -v $HOME/.dbeaver/storage:/storage \
+        --network host \
+        microsnailapps/dbeaver-ce
+}
+
+# firefox() {}
+
+gimp() {
+    del_stopped gimp
+
+    docker run -d \
+        --name gimp \
+        -e DISPLAY=unix$DISPLAY \
+        -v /etc/localtime:/etc/localtime:ro \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        -v $HOME/Pictures:/root/Pictures \
+        r.j3ss.co/gimp
+}
+
+pg96() {
+    del_stopped postgres96
+
+    docker run -d \
+        --name postgres96 \
+        -p 5432:5432 \
+        -v pg96data:/var/lib/postgresql/data \
+        postgres:9.6-alpine
+}
+
+postwoman() {
+    del_stopped postwoman
+
+    docker run -d \
+        --name postwoman \
+        -p 3000:3000 \
+        -v $HOME/.postwoman:/app/.postwoman \
+        --restart unless-stopped \
+        liyasthomas/postwoman
+}
+
+# sublime() {}
+
+skype() {
+    del_stopped skype
+
+    docker run -d \
+        --name skype \
+        -e DISPLAY=unix$DISPLAY \
+        -e PULSE_SERVER=pulseaudio \
+        -v /etc/localtime:/etc/localtime:ro \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        --security-opt seccomp:unconfined \
+        --device /dev/snd \
+        --device /dev/video0 \
+        --group-add video \
+        --group-add audio \
+        r.j3ss.co/skype
+}
+
+spotify() {
+    del_stopped spotify
+
+    # Fix for non-root container permissions
+    # chown -R 1000:1000 .spotify{config,cache}
+
+    docker run -d \
+        --name spotify \
+        -v /etc/localtime:/etc/localtime:ro \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        -v $HOME/.spotify/config:/home/spotify/.config/spotify \
+        -v $HOME/.spotify/cache:/home/spotify/.cache/spotify \
+        -e DISPLAY=unix$DISPLAY \
+        -e QT_DEVICE_PIXEL_RATIO \
+        --security-opt seccomp:unconfined \
+        --device /dev/snd \
+        --device /dev/dri \
+        --group-add audio \
+        --group-add video \
+        r.j3ss.co/spotify
+}
+
+# sil_is() {}
+# alias sil-is="sil_is"
+
+# youtube_dl() {}
+# alias youtube-dl="youtube_dl"
+
+transmission() {
+    del_stopped transmission
+
+    local TIMEZONE=$(cat /etc/timezone)
+    docker run -d \
+        --name transmission \
+        -e PUID=1000 \
+        -e PGID=1000 \
+        -e TZ=$TIMEZONE \
+        -p 9091:9091 \
+        -p 51413:51413 \
+        -p 51413:51413/udp \
+        -v $HOME/.transmission:/config \
+        -v $HOME/Torrents:/downloads \
+        -v $HOME/Torrents/watch:/watch \
+        --restart unless-stopped \
+        linuxserver/transmission
+}
+
+zoom_us() {
+    del_stopped zoom
+
+    docker run -d \
+        --name zoom \
+        -e DISPLAY=unix$DISPLAY \
+        -v /etc/localtime:/etc/localtime:ro \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        -v /dev/shm:/dev/shm \
+        --device /dev/video0 \
+        --device /dev/snd:/dev/snd \
+        --device /dev/dri \
+        r.j3ss.co/zoom-us
+}
+alias zoom-us="zoom_us"
