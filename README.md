@@ -2,6 +2,8 @@
 
 My configuration files.
 
+[![Travis CI](https://img.shields.io/travis/com/evansmurithi/dotfiles?style=flat-square)](https://travis-ci.com/evansmurithi/dotfiles)
+
 **Table of Contents**
 
 <!-- toc -->
