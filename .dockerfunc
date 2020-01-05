@@ -71,7 +71,7 @@ pg96() {
     docker run -d \
         --name postgres96 \
         -p 5432:5432 \
-        -v pg96data:/var/lib/postgresql/data \
+        -v pgdata:/var/lib/postgresql/data \
         postgres:9.6-alpine
 }
 
