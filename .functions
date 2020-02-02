@@ -12,3 +12,12 @@ man() {
         LESS_TERMCAP_us="$(printf '\e[1;32m')" \
         man "$@"
 }
+
+# Start firefox with the selected profile
+ff() {
+    local mozilla_profiles_file="$HOME/.mozilla/firefox/profiles.ini"
+    # fetch profile names from firefox's profiles config file
+    selected_profile=$(python3 -c "import configparser; c = configparser.ConfigParser(); c.read('$mozilla_profiles_file'); print('\n'.join(map(lambda s: c[s]['name'], filter(lambda s: s.startswith('Profile'), c.sections()))))" | dmenu)
+    echo "Starting firefox with profile '$selected_profile'"
+    firefox -P "$selected_profile" -no-remote &
+}
