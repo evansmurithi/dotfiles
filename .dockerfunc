@@ -51,8 +51,6 @@ dbeaver() {
         microsnailapps/dbeaver-ce
 }
 
-# firefox() {}
-
 gimp() {
     del_stopped gimp
 
@@ -133,9 +131,6 @@ spotify() {
         --group-add video \
         r.j3ss.co/spotify
 }
-
-# youtube_dl() {}
-# alias youtube-dl="youtube_dl"
 
 transmission() {
     del_stopped transmission
